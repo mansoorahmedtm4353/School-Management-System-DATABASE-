@@ -1,0 +1,805 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IMSciences School Management System</title>
+    <!-- Google Fonts: Outfit -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- FontAwesome for Premium Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- AlaSQL client-side database library -->
+    <script src="https://cdn.jsdelivr.net/npm/alasql@4"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">
+                    <i class="fa-solid fa-graduation-cap logo-icon"></i>
+                    <div class="logo-text">
+                        <span class="logo-title">IMSciences</span>
+                        <span class="logo-subtitle">SMS Database</span>
+                    </div>
+                </div>
+            </div>
+            <nav class="sidebar-menu">
+                <a href="#" class="menu-item active" data-tab="dashboard">
+                    <i class="fa-solid fa-chart-line"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="#" class="menu-item" data-tab="students">
+                    <i class="fa-solid fa-user-graduate"></i>
+                    <span>Students</span>
+                </a>
+                <a href="#" class="menu-item" data-tab="enrollments">
+                    <i class="fa-solid fa-file-signature"></i>
+                    <span>Enrollments & Grades</span>
+                </a>
+                <a href="#" class="menu-item" data-tab="courses">
+                    <i class="fa-solid fa-book-bookmark"></i>
+                    <span>Courses & Classes</span>
+                </a>
+                <a href="#" class="menu-item" data-tab="staff">
+                    <i class="fa-solid fa-chalkboard-user"></i>
+                    <span>Instructors & Rooms</span>
+                </a>
+                <a href="#" class="menu-item" data-tab="views">
+                    <i class="fa-solid fa-table-list"></i>
+                    <span>Relational Views</span>
+                </a>
+                <a href="#" class="menu-item" data-tab="reports">
+                    <i class="fa-solid fa-square-poll-vertical"></i>
+                    <span>Common Reports</span>
+                </a>
+                <a href="#" class="menu-item" data-tab="console">
+                    <i class="fa-solid fa-terminal"></i>
+                    <span>SQL Console</span>
+                </a>
+                <a href="#" class="menu-item" data-tab="mysql">
+                    <i class="fa-solid fa-database"></i>
+                    <span>MySQL Play & Export</span>
+                </a>
+            </nav>
+            <div class="sidebar-footer">
+                <div class="db-status">
+                    <span class="status-indicator online"></span>
+                    <span class="status-text">SQLite (AlaSQL) Connected</span>
+                </div>
+                <button id="reset-db-btn" class="btn btn-sm btn-outline-danger">
+                    <i class="fa-solid fa-rotate-left"></i> Reset Database
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <!-- Top Header -->
+            <header class="top-header">
+                <div class="header-left">
+                    <h1 id="page-title">Dashboard Overview</h1>
+                    <p id="page-subtitle" class="text-muted">Academic session 2024 - 2028</p>
+                </div>
+                <div class="header-right">
+                    <div class="user-profile">
+                        <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=256&auto=format&fit=crop" alt="User Profile" class="avatar">
+                        <div class="user-info">
+                            <span class="user-name">Mansoor Ahmad</span>
+                            <span class="user-role">DB Administrator</span>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Content Screens -->
+            <div class="content-body">
+                
+                <!-- TAB: DASHBOARD -->
+                <section id="tab-dashboard" class="tab-pane active">
+                    <!-- KPI Metrics Grid -->
+                    <div class="metrics-grid">
+                        <div class="metric-card glass">
+                            <div class="metric-icon bg-indigo"><i class="fa-solid fa-users"></i></div>
+                            <div class="metric-info">
+                                <span class="metric-label">Total Students</span>
+                                <h3 id="stat-total-students" class="metric-value">0</h3>
+                                <span class="metric-trend text-success"><i class="fa-solid fa-angle-up"></i> Graduate & Undergrad</span>
+                            </div>
+                        </div>
+                        <div class="metric-card glass">
+                            <div class="metric-icon bg-teal"><i class="fa-solid fa-user-tie"></i></div>
+                            <div class="metric-info">
+                                <span class="metric-label">Active Instructors</span>
+                                <h3 id="stat-total-instructors" class="metric-value">0</h3>
+                                <span class="metric-trend text-muted">Supervisors & Teachers</span>
+                            </div>
+                        </div>
+                        <div class="metric-card glass">
+                            <div class="metric-icon bg-purple"><i class="fa-solid fa-graduation-cap"></i></div>
+                            <div class="metric-info">
+                                <span class="metric-label">Total Courses</span>
+                                <h3 id="stat-total-courses" class="metric-value">0</h3>
+                                <span class="metric-trend text-success">Accredited by IMSciences</span>
+                            </div>
+                        </div>
+                        <div class="metric-card glass">
+                            <div class="metric-icon bg-orange"><i class="fa-solid fa-door-open"></i></div>
+                            <div class="metric-info">
+                                <span class="metric-label">Rooms Available</span>
+                                <h3 id="stat-total-rooms" class="metric-value">0</h3>
+                                <span class="metric-trend text-info" id="stat-free-rooms-count">0 Free yet</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Dashboard Main Sections -->
+                    <div class="dashboard-layout">
+                        <!-- Left Panel: Stored Procedure Interactive Call -->
+                        <div class="dashboard-panel glass flex-2">
+                            <div class="panel-header">
+                                <h3><i class="fa-solid fa-address-card text-indigo"></i> Student Result Lookup</h3>
+                                <span class="badge badge-indigo">Procedure: Student_Result</span>
+                            </div>
+                            <p class="panel-desc text-muted">Simulates the `Student_Result` stored procedure. Select a student to generate their academic transcript in real-time.</p>
+                            
+                            <div class="search-form-row">
+                                <div class="form-group flex-1">
+                                    <label for="procedure-student-select">Select Student ID</label>
+                                    <select id="procedure-student-select" class="form-control">
+                                        <!-- Dynamically Populated -->
+                                    </select>
+                                </div>
+                                <button id="run-procedure-result-btn" class="btn btn-indigo align-self-end">
+                                    <i class="fa-solid fa-play"></i> Generate Transcript
+                                </button>
+                            </div>
+
+                            <!-- Stored Procedure Execution Logs Output -->
+                            <div class="console-box mt-4">
+                                <div class="console-header">
+                                    <span><i class="fa-solid fa-terminal"></i> DBMS_OUTPUT (PL/pgSQL Notice Logs)</span>
+                                    <button id="clear-proc-logs" class="btn-icon" title="Clear console"><i class="fa-solid fa-trash-can"></i></button>
+                                </div>
+                                <pre id="procedure-output-logs" class="console-body">-- Click "Generate Transcript" above to run the procedure --</pre>
+                            </div>
+                        </div>
+
+                        <!-- Right Panel: DB Overview Chart/List -->
+                        <div class="dashboard-panel glass flex-1">
+                            <div class="panel-header">
+                                <h3><i class="fa-solid fa-sitemap text-teal"></i> Departments Summary</h3>
+                            </div>
+                            <p class="panel-desc text-muted">Graduate student distribution & HOD status.</p>
+                            <div class="dept-list-mini" id="dashboard-dept-list">
+                                <!-- Dynamic List -->
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- TAB: STUDENTS -->
+                <section id="tab-students" class="tab-pane">
+                    <div class="section-actions glass">
+                        <div class="search-box">
+                            <i class="fa-solid fa-magnifying-glass"></i>
+                            <input type="text" id="student-search-input" placeholder="Search by name, ID, or CNIC...">
+                        </div>
+                        <div class="filters">
+                            <select id="student-filter-type" class="form-control-sm">
+                                <option value="ALL">All Student Types</option>
+                                <option value="GRADUATE">Graduate Students</option>
+                                <option value="UNDERGRADUATE">Undergraduate Students</option>
+                            </select>
+                            <select id="student-filter-dept" class="form-control-sm">
+                                <option value="ALL">All Departments</option>
+                                <!-- Dynamic options -->
+                            </select>
+                        </div>
+                        <button id="add-student-modal-btn" class="btn btn-teal">
+                            <i class="fa-solid fa-user-plus"></i> Add Student
+                        </button>
+                    </div>
+
+                    <!-- Students Directory Table -->
+                    <div class="table-container glass mt-4">
+                        <table class="data-table" id="students-table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Full Name</th>
+                                    <th>CNIC</th>
+                                    <th>Gender</th>
+                                    <th>Date of Birth</th>
+                                    <th>Department</th>
+                                    <th>Student Type</th>
+                                    <th>Advisor</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Dynamic -->
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <!-- TAB: ENROLLMENTS & GRADES -->
+                <section id="tab-enrollments" class="tab-pane">
+                    <div class="grid-2col">
+                        <!-- Left Panel: Enrollment Form / InsertGrade simulation -->
+                        <div class="dashboard-panel glass">
+                            <div class="panel-header">
+                                <h3><i class="fa-solid fa-pen-fancy text-indigo"></i> Course Enrollment & Grade Entry</h3>
+                                <span class="badge badge-indigo">Procedure: InsertGrade</span>
+                            </div>
+                            <p class="panel-desc text-muted">Simulates database triggers (Prerequisite Enforcements & Course Limits) and the grade automation procedure.</p>
+                            
+                            <form id="enrollment-form">
+                                <div class="form-group">
+                                    <label for="enroll-student-select">Select Student</label>
+                                    <select id="enroll-student-select" class="form-control" required>
+                                        <option value="">-- Choose Student --</option>
+                                    </select>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="enroll-course-select">Select Course</label>
+                                    <select id="enroll-course-select" class="form-control" required>
+                                        <option value="">-- Choose Course --</option>
+                                    </select>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="enroll-marks">Course Marks (0 - 100) <span class="text-muted">(Optional for registration, required for grading)</span></label>
+                                    <input type="number" id="enroll-marks" class="form-control" min="0" max="100" placeholder="e.g. 85">
+                                </div>
+
+                                <div class="form-row mt-4">
+                                    <button type="submit" class="btn btn-indigo flex-1">
+                                        <i class="fa-solid fa-circle-check"></i> Submit Enrollment
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+
+                        <!-- Right Panel: Trigger Details & Explanations -->
+                        <div class="dashboard-panel glass">
+                            <div class="panel-header">
+                                <h3><i class="fa-solid fa-shield-halved text-purple"></i> Active Database Triggers</h3>
+                            </div>
+                            <p class="panel-desc text-muted">These triggers are validated programmatically during execution:</p>
+                            
+                            <div class="trigger-card active">
+                                <div class="trigger-card-header">
+                                    <span class="trigger-name"><i class="fa-solid fa-triangle-exclamation"></i> trg_CheckCourseEnrollmentLimit</span>
+                                    <span class="status-badge">BEFORE INSERT</span>
+                                </div>
+                                <p class="trigger-card-body">Ensures that **no more than 20 students** can be enrolled in any individual course code. Attempts to add more will abort the transaction.</p>
+                            </div>
+
+                            <div class="trigger-card active mt-3">
+                                <div class="trigger-card-header">
+                                    <span class="trigger-name"><i class="fa-solid fa-key"></i> trg_EnforcePrereqCompletion</span>
+                                    <span class="status-badge">BEFORE INSERT</span>
+                                </div>
+                                <p class="trigger-card-body">Verifies that a student has completed and passed (status = <strong>'PASS'</strong>) all required prerequisites for a course before allowing enrollment.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Enrollments Table -->
+                    <div class="table-container glass mt-4">
+                        <div class="table-header">
+                            <h3><i class="fa-solid fa-list-check"></i> Master Enrollment Registry</h3>
+                        </div>
+                        <table class="data-table" id="enrollments-table">
+                            <thead>
+                                <tr>
+                                    <th>Student ID</th>
+                                    <th>Student Name</th>
+                                    <th>Course Code</th>
+                                    <th>Course Title</th>
+                                    <th>Enrollment Date</th>
+                                    <th>Grade</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Dynamic -->
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <!-- TAB: COURSES -->
+                <section id="tab-courses" class="tab-pane">
+                    <div class="grid-2col">
+                        <!-- Left Panel: Course list & Pre-requisites -->
+                        <div class="dashboard-panel glass">
+                            <div class="panel-header">
+                                <h3>Courses List</h3>
+                                <button id="add-course-btn" class="btn btn-sm btn-indigo"><i class="fa-solid fa-plus"></i> New Course</button>
+                            </div>
+                            <div class="table-container compact">
+                                <table class="data-table" id="courses-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Code</th>
+                                            <th>Title</th>
+                                            <th>Credits</th>
+                                            <th>Prerequisites</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <!-- Dynamic -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- Right Panel: Classes (Associative Entity) -->
+                        <div class="dashboard-panel glass">
+                            <div class="panel-header">
+                                <h3>Classes Schedule</h3>
+                                <button id="add-class-btn" class="btn btn-sm btn-indigo"><i class="fa-solid fa-plus"></i> Schedule Class</button>
+                            </div>
+                            <p class="panel-desc text-muted">Maps instructors, courses, and lecture rooms.</p>
+                            <div class="table-container compact">
+                                <table class="data-table" id="classes-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Instructor</th>
+                                            <th>Course Code</th>
+                                            <th>Room No</th>
+                                            <th>Room Cap</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <!-- Dynamic -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- TAB: STAFF & ROOMS -->
+                <section id="tab-staff" class="tab-pane">
+                    <div class="grid-3col">
+                        <!-- Left Column: Instructors -->
+                        <div class="dashboard-panel glass flex-1">
+                            <div class="panel-header">
+                                <h3><i class="fa-solid fa-chalkboard-user text-teal"></i> Instructors</h3>
+                                <button id="add-instructor-btn" class="btn btn-sm btn-teal"><i class="fa-solid fa-plus"></i> Add</button>
+                            </div>
+                            <div class="instructors-list" id="instructors-list-container">
+                                <!-- Dynamic List -->
+                            </div>
+                        </div>
+
+                        <!-- Middle Column: Departments -->
+                        <div class="dashboard-panel glass flex-1">
+                            <div class="panel-header">
+                                <h3><i class="fa-solid fa-building-columns text-indigo"></i> Departments</h3>
+                                <button id="add-dept-btn" class="btn btn-sm btn-indigo"><i class="fa-solid fa-plus"></i> Add</button>
+                            </div>
+                            <div class="dept-list-detailed" id="depts-list-container">
+                                <!-- Dynamic List -->
+                            </div>
+                        </div>
+
+                        <!-- Right Column: Rooms -->
+                        <div class="dashboard-panel glass flex-1">
+                            <div class="panel-header">
+                                <h3><i class="fa-solid fa-door-open text-orange"></i> Classrooms</h3>
+                                <button id="add-room-btn" class="btn btn-sm btn-orange"><i class="fa-solid fa-plus"></i> Add</button>
+                            </div>
+                            <div class="table-container compact">
+                                <table class="data-table" id="rooms-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Room No</th>
+                                            <th>Capacity</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <!-- Dynamic -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- TAB: RELATIONAL VIEWS -->
+                <section id="tab-views" class="tab-pane">
+                    <div class="view-navigation glass">
+                        <button class="view-nav-item active" data-view="student_details">View 1: student_details</button>
+                        <button class="view-nav-item" data-view="Enrollment_Details">View 2: Enrollment_Details</button>
+                        <button class="view-nav-item" data-view="Graduate_Student_Details">View 3: Graduate_Student_Details</button>
+                        <button class="view-nav-item" data-view="Pre_Requisite_Course_Details">View 4: Pre_Requisite_Course_Details</button>
+                    </div>
+
+                    <!-- View Details Description -->
+                    <div class="view-description-card glass mt-3">
+                        <h4 id="view-title">View: student_details</h4>
+                        <pre id="view-sql-definition" class="sql-definition-code">
+CREATE OR REPLACE VIEW student_details AS
+SELECT ...
+                        </pre>
+                    </div>
+
+                    <!-- View Output Data Table -->
+                    <div class="table-container glass mt-4">
+                        <table class="data-table" id="views-data-table">
+                            <thead>
+                                <tr id="views-thead-row">
+                                    <!-- Dynamic -->
+                                </tr>
+                            </thead>
+                            <tbody id="views-tbody">
+                                <!-- Dynamic -->
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <!-- TAB: REPORTS -->
+                <section id="tab-reports" class="tab-pane">
+                    <div class="reports-grid">
+                        <!-- Report 1 -->
+                        <div class="report-box glass">
+                            <div class="report-header">
+                                <h4>1. Thesis Complete Students</h4>
+                                <span class="badge badge-success">SQL Query</span>
+                            </div>
+                            <p class="text-muted text-sm">Graduate students who completed their thesis with advisor information.</p>
+                            <button class="btn btn-sm btn-indigo run-report-btn" data-report="1"><i class="fa-solid fa-play"></i> Run Report</button>
+                        </div>
+
+                        <!-- Report 2 -->
+                        <div class="report-box glass">
+                            <div class="report-header">
+                                <h4>2. Vacant Classrooms</h4>
+                                <span class="badge badge-success">SQL Query</span>
+                            </div>
+                            <p class="text-muted text-sm">Lists rooms that have not been assigned to any scheduled class yet.</p>
+                            <button class="btn btn-sm btn-indigo run-report-btn" data-report="2"><i class="fa-solid fa-play"></i> Run Report</button>
+                        </div>
+
+                        <!-- Report 3 -->
+                        <div class="report-box glass">
+                            <div class="report-header">
+                                <h4>3. HOD & Dept enrollment counts</h4>
+                                <span class="badge badge-success">SQL Query</span>
+                            </div>
+                            <p class="text-muted text-sm">Aggregates departments: lists HOD names and counts enrolled students.</p>
+                            <button class="btn btn-sm btn-indigo run-report-btn" data-report="3"><i class="fa-solid fa-play"></i> Run Report</button>
+                        </div>
+
+                        <!-- Report 4 -->
+                        <div class="report-box glass">
+                            <div class="report-header">
+                                <h4>4. FYP Supervisors</h4>
+                                <span class="badge badge-success">SQL Query</span>
+                            </div>
+                            <p class="text-muted text-sm">Lists unique instructors who are actively supervising undergraduate FYPs.</p>
+                            <button class="btn btn-sm btn-indigo run-report-btn" data-report="4"><i class="fa-solid fa-play"></i> Run Report</button>
+                        </div>
+
+                        <!-- Report 5 -->
+                        <div class="report-box glass">
+                            <div class="report-header">
+                                <h4>5. Failing Students Registry</h4>
+                                <span class="badge badge-success">SQL Query</span>
+                            </div>
+                            <p class="text-muted text-sm">Lists students failing in any subject, including teacher names.</p>
+                            <button class="btn btn-sm btn-indigo run-report-btn" data-report="5"><i class="fa-solid fa-play"></i> Run Report</button>
+                        </div>
+                    </div>
+
+                    <!-- Report Table Output -->
+                    <div class="table-container glass mt-4 d-none" id="report-output-container">
+                        <div class="table-header">
+                            <h3 id="running-report-title">Report Title</h3>
+                            <pre id="running-report-sql" class="sql-definition-code text-xs"></pre>
+                        </div>
+                        <table class="data-table" id="reports-data-table">
+                            <thead>
+                                <tr id="reports-thead-row">
+                                    <!-- Dynamic -->
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Dynamic -->
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <!-- TAB: SQL CONSOLE -->
+                <section id="tab-console" class="tab-pane">
+                    <div class="grid-console">
+                        <!-- SQL Input Box -->
+                        <div class="dashboard-panel glass">
+                            <div class="panel-header">
+                                <h3><i class="fa-solid fa-terminal text-teal"></i> SQLite Query Prompt</h3>
+                                <div class="console-actions">
+                                    <button id="console-preset-btn" class="btn btn-sm btn-outline-info">Load Sample Query</button>
+                                    <button id="console-clear-btn" class="btn btn-sm btn-outline-danger">Clear Console</button>
+                                </div>
+                            </div>
+                            <p class="panel-desc text-muted">Execute real standard SQL commands against the database. Tables: <code>Student</code>, <code>Graduate_Student</code>, <code>Undergraduate_Student</code>, <code>Department</code>, <code>Instructor</code>, <code>Room</code>, <code>Course</code>, <code>Pre_Requisite_Course</code>, <code>Class</code>, <code>Enrollment</code>.</p>
+                            
+                            <div class="sql-editor-container">
+                                <textarea id="sql-console-input" class="sql-textarea" rows="8" placeholder="SELECT * FROM Student LIMIT 5;"></textarea>
+                            </div>
+                            
+                            <div class="form-row mt-3">
+                                <button id="console-run-btn" class="btn btn-indigo flex-1">
+                                    <i class="fa-solid fa-bolt"></i> Execute Query (Ctrl + Enter)
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Console Schema Reference -->
+                        <div class="dashboard-panel glass">
+                            <div class="panel-header">
+                                <h3><i class="fa-solid fa-circle-info text-indigo"></i> Relational Schema Reference</h3>
+                            </div>
+                            <div class="schema-helper">
+                                <ul>
+                                    <li><strong>Student</strong>(<u>student_id</u>, first_name, last_name, cnic, gender, dob, address, phone, deptno)</li>
+                                    <li><strong>Graduate_Student</strong>(<u>student_id</u>, thesis_advisor, thesis_status)</li>
+                                    <li><strong>Undergraduate_Student</strong>(<u>student_id</u>, fyp_advisor)</li>
+                                    <li><strong>Department</strong>(<u>deptno</u>, deptname, hod)</li>
+                                    <li><strong>Instructor</strong>(<u>instructor_id</u>, first_name, last_name, email, phone)</li>
+                                    <li><strong>Room</strong>(<u>roomno</u>, capacity)</li>
+                                    <li><strong>Course</strong>(<u>course_code</u>, course_title, credit_hours)</li>
+                                    <li><strong>Pre_Requisite_Course</strong>(<u>course_code</u>, <u>pre_req</u>)</li>
+                                    <li><strong>Class</strong>(<u>instructor_id</u>, <u>course_code</u>, room_no)</li>
+                                    <li><strong>Enrollment</strong>(<u>student_id</u>, <u>course_code</u>, enrollment_date, grade, status)</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- SQL Query Output Table -->
+                    <div class="table-container glass mt-4 d-none" id="console-output-container">
+                        <div class="table-header">
+                            <h3><i class="fa-solid fa-list"></i> Query Result</h3>
+                            <span class="text-muted text-sm" id="console-query-time">Returned X rows in Y ms</span>
+                        </div>
+                        <div class="console-output-box">
+                            <table class="data-table" id="console-data-table">
+                                <thead>
+                                    <tr id="console-thead-row">
+                                        <!-- Dynamic -->
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- Dynamic -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="console-error-box glass mt-4 d-none" id="console-error-container">
+                        <div class="console-error-header"><i class="fa-solid fa-circle-xmark"></i> SQL Execution Failed</div>
+                        <pre class="console-error-body" id="console-error-message"></pre>
+                    </div>
+                </section>
+
+                <!-- TAB: MYSQL -->
+                <section id="tab-mysql" class="tab-pane">
+                    <div class="grid-2col">
+                        <!-- Left Panel: MySQL Console -->
+                        <div class="dashboard-panel glass">
+                            <div class="panel-header">
+                                <h3><i class="fa-solid fa-database text-teal"></i> MySQL Query Console</h3>
+                                <span class="badge badge-teal">MySQL Mode: Active</span>
+                            </div>
+                            <p class="panel-desc text-muted">Runs queries using MySQL dialect compatibility. MySQL-specific functions (like <code>IFNULL()</code>, <code>CONCAT()</code>, and MySQL comments) are fully supported.</p>
+                            
+                            <div class="sql-editor-container">
+                                <textarea id="mysql-console-input" class="sql-textarea" rows="8" placeholder="SELECT student_id, IFNULL(grade, 'NO GRADE') AS Student_Grade FROM Enrollment;"></textarea>
+                            </div>
+                            
+                            <div class="form-row mt-3">
+                                <button id="mysql-console-run-btn" class="btn btn-teal flex-1">
+                                    <i class="fa-solid fa-bolt"></i> Execute MySQL Query (Ctrl + Enter)
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Right Panel: Export Script -->
+                        <div class="dashboard-panel glass">
+                            <div class="panel-header">
+                                <h3><i class="fa-solid fa-file-code text-indigo"></i> MySQL Export Script</h3>
+                                <button id="copy-mysql-script-btn" class="btn btn-sm btn-outline"><i class="fa-solid fa-copy"></i> Copy Script</button>
+                            </div>
+                            <p class="panel-desc text-muted">Get the fully converted MySQL DDL/DML script (includes tables, mock data, views, triggers, and stored procedures) to run directly in phpMyAdmin, MySQL Workbench, or CLI.</p>
+                            
+                            <div class="console-box">
+                                <div class="console-header">
+                                    <span>ims_mysql_schema.sql</span>
+                                </div>
+                                <pre id="mysql-export-code" class="console-body text-xs" style="max-height: 250px; color: #93c5fd; font-family: monospace;"></pre>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- MySQL Console Query Output -->
+                    <div class="table-container glass mt-4 d-none" id="mysql-output-container">
+                        <div class="table-header">
+                            <h3><i class="fa-solid fa-list"></i> Query Result</h3>
+                            <span class="text-muted text-sm" id="mysql-query-time">Returned X rows in Y ms</span>
+                        </div>
+                        <div class="console-output-box">
+                            <table class="data-table" id="mysql-data-table">
+                                <thead>
+                                    <tr id="mysql-thead-row">
+                                        <!-- Dynamic -->
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- Dynamic -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="console-error-box glass mt-4 d-none" id="mysql-error-container">
+                        <div class="console-error-header"><i class="fa-solid fa-circle-xmark"></i> MySQL Execution Failed</div>
+                        <pre class="console-error-body" id="mysql-error-message"></pre>
+                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
+
+    <!-- MODAL: ADD STUDENT -->
+    <div id="add-student-modal" class="modal-overlay">
+        <div class="modal-card glass">
+            <div class="modal-header">
+                <h3><i class="fa-solid fa-user-plus"></i> Register New Student</h3>
+                <button class="modal-close-btn">&times;</button>
+            </div>
+            <form id="add-student-form">
+                <div class="modal-body scrollable">
+                    <div class="form-row">
+                        <div class="form-group flex-1">
+                            <label for="std-id">Student ID (CHAR 10)*</label>
+                            <input type="text" id="std-id" class="form-control" maxlength="10" required placeholder="e.g. S-00000001">
+                        </div>
+                        <div class="form-group flex-1">
+                            <label for="std-cnic">CNIC (CHAR 13)*</label>
+                            <input type="text" id="std-cnic" class="form-control" maxlength="13" required placeholder="e.g. 1730123456789">
+                        </div>
+                    </div>
+
+                    <div class="form-row mt-3">
+                        <div class="form-group flex-1">
+                            <label for="std-firstname">First Name*</label>
+                            <input type="text" id="std-firstname" class="form-control" required placeholder="e.g. Ali">
+                        </div>
+                        <div class="form-group flex-1">
+                            <label for="std-lastname">Last Name*</label>
+                            <input type="text" id="std-lastname" class="form-control" required placeholder="e.g. Khan">
+                        </div>
+                    </div>
+
+                    <div class="form-row mt-3">
+                        <div class="form-group flex-1">
+                            <label for="std-gender">Gender*</label>
+                            <select id="std-gender" class="form-control" required>
+                                <option value="M">Male</option>
+                                <option value="F">Female</option>
+                            </select>
+                        </div>
+                        <div class="form-group flex-1">
+                            <label for="std-dob">Date of Birth</label>
+                            <input type="date" id="std-dob" class="form-control">
+                        </div>
+                    </div>
+
+                    <div class="form-row mt-3">
+                        <div class="form-group flex-1">
+                            <label for="std-phone">Phone Number (CHAR 13)*</label>
+                            <input type="text" id="std-phone" class="form-control" maxlength="13" required placeholder="e.g. 923331234567">
+                        </div>
+                        <div class="form-group flex-1">
+                            <label for="std-dept">Department*</label>
+                            <select id="std-dept" class="form-control" required>
+                                <!-- Dynamic -->
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group mt-3">
+                        <label for="std-address">Address</label>
+                        <input type="text" id="std-address" class="form-control" placeholder="e.g. Phase 4, Hayatabad, Peshawar">
+                    </div>
+
+                    <hr class="modal-divider mt-4 mb-3">
+
+                    <div class="form-group">
+                        <label>Student Category*</label>
+                        <div class="radio-group">
+                            <label class="radio-label">
+                                <input type="radio" name="std-subtype" value="UNDERGRADUATE" checked> Undergraduate
+                            </label>
+                            <label class="radio-label">
+                                <input type="radio" name="std-subtype" value="GRADUATE"> Graduate
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Undergrad Section -->
+                    <div id="undergrad-fields" class="subtype-fields mt-3">
+                        <div class="form-group">
+                            <label for="std-fyp-advisor">FYP Advisor (Instructor)*</label>
+                            <select id="std-fyp-advisor" class="form-control">
+                                <option value="">-- Choose Instructor --</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Grad Section -->
+                    <div id="grad-fields" class="subtype-fields mt-3 d-none">
+                        <div class="form-row">
+                            <div class="form-group flex-1">
+                                <label for="std-thesis-advisor">Thesis Advisor (Instructor)*</label>
+                                <select id="std-thesis-advisor" class="form-control">
+                                    <option value="">-- Choose Instructor --</option>
+                                </select>
+                            </div>
+                            <div class="form-group flex-1">
+                                <label for="std-thesis-status">Thesis Status</label>
+                                <select id="std-thesis-status" class="form-control">
+                                    <option value="IN PROGRESS">In Progress</option>
+                                    <option value="COMPLETE">Complete</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline modal-close-btn">Cancel</button>
+                    <button type="submit" class="btn btn-teal">Register Student</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Generic Dialog modals for adding courses/instructors/depts/rooms/classes -->
+    <div id="generic-modal" class="modal-overlay">
+        <div class="modal-card glass">
+            <div class="modal-header">
+                <h3 id="generic-modal-title">Title</h3>
+                <button class="modal-close-btn">&times;</button>
+            </div>
+            <form id="generic-modal-form">
+                <div class="modal-body" id="generic-modal-body">
+                    <!-- Dynamic -->
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline modal-close-btn">Cancel</button>
+                    <button type="submit" class="btn btn-indigo" id="generic-modal-submit-btn">Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Toast Notification Container -->
+    <div class="toast-container" id="toast-container"></div>
+
+    <!-- Load main JavaScript Module -->
+    <script src="app.js"></script>
+</body>
+</html>
